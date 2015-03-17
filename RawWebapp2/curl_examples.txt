@@ -1,0 +1,36 @@
+# Create teams
+curl -v -X POST -H "Content Type: application/json" -H "Accept: application/json" -d "{\"name\": \"Minnesota\", \"mascot\":\"Gopher\", \"colors\":[\"maroon\", \"gold\"]}" http://127.0.0.1:8080/v1/teams
+curl -v -X POST -H "Content Type: application/json" -H "Accept: application/json" -d "{\"name\": \"Wisconsin\", \"mascot\":\"Badger\", \"colors\":[\"cardinal\", \"white\"]}" http://127.0.0.1:8080/v1/teams
+
+# Get all teams
+curl -v http://127.0.0.1:8080/v1/teams
+
+# Get a specific team
+curl -v http://127.0.0.1:8080/v1/teams/<team_id>
+
+# Update a team
+curl -v -X PUT -H "Content Type: application/json" -H "Accept: application/json" -d "{\"name\": \"Wisconsin\", \"mascot\":\"Bucky Badger\", \"colors\":[\"red\", \"white\"]}" http://127.0.0.1:8080/v1/teams/<team_id>
+
+# Update a team (incrementally)
+curl -v -X PATCH -H "Content Type: application/json" -H "Accept: application/json" -d "{\"mascot\":\"Bucky Badger\"}" http://127.0.0.1:8080/v1/teams/<team_id>
+
+# Delete a team
+curl -v -X DELETE http://127.0.0.1:8080/v1/teams/<team_id>
+
+# Create a player
+curl -v -X POST -H "Content Type: application/json" -H "Accept: application/json" -d "{\"name\": \"Kyle Rau\", \"position\": \"Forward\"}" http://127.0.0.1:8080/v1/teams/<team_id>/players
+
+# Get all players
+curl -v http://127.0.0.1:8080/v1/teams/<team_id>/players
+
+# Get a specific player
+curl -v http://127.0.0.1:8080/v1/teams/<team_id>/players/<player_id
+
+# Update a player
+curl -v -X PUT -H "Content Type: application/json" -H "Accept: application/json" -d "{\"name\": \"Kyle Rau\", \"position\": \"Defense\"}" http://127.0.0.1:8080/v1/teams/<team_id>/players/<player_id>
+
+# Update a player (incrementally)
+curl -v -X PATCH -H "Content Type: application/json" -H "Accept: application/json" -d "{\"position\": \"Defense\"}" http://127.0.0.1:8080/v1/teams/<team_id>/players/<player_id>
+
+# Delete a player
+curl -v -X DELETE http://127.0.0.1:8080/v1/teams/<team_id>/players/<player_id>
