@@ -10,7 +10,7 @@ host = "http://localhost:8080"
 #
 gophers = json.loads(requests.post(
     url=host + "/_ah/api/sports/v1/teams",
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Minnesota',
         'mascot': 'Gopher',
@@ -22,7 +22,7 @@ print "Gophers: " + json.dumps(gophers, indent=4)
 
 badgers = json.loads(requests.post(
     url=host + "/_ah/api/sports/v1/teams",
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Wisconsin',
         'mascot': 'Badger',
@@ -54,7 +54,7 @@ print "Gophers:" + json.dumps(json.loads(requests.get(
 #
 badgers = json.loads(requests.put(
     url=host + "/_ah/api/sports/v1/teams/" + badgers['id'],
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Wisconsin',
         'mascot': 'Bucky Badger',
@@ -69,7 +69,7 @@ print "Updated Badgers: " + json.dumps(badgers, indent=4)
 #
 gophers = json.loads(requests.patch(
     url=host + "/_ah/api/sports/v1/teams/" + gophers['id'],
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({'mascot': 'Goldy Gopher'})
 ).content)
 
@@ -85,7 +85,7 @@ print "Delete Status: %d" % requests.delete(url=host + "/_ah/api/sports/v1/teams
 #
 kyle_rau = json.loads(requests.post(
     url=host + "/_ah/api/sports/v1/teams/%s/players" % gophers['id'],
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Kyle Rau',
         'position': 'Forward'
@@ -96,7 +96,7 @@ print "Kyle Rau: " + json.dumps(kyle_rau, indent=4)
 
 adam_wilcox = json.loads(requests.post(
     url=host + "/_ah/api/sports/v1/teams/%s/players" % gophers['id'],
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Adam Wilcox',
         'position': 'Goalie'
@@ -135,7 +135,7 @@ print "Kyle Rau: " + json.dumps(json.loads(requests.get(
 #
 kyle_rau = json.loads(requests.put(
     url=host + "/_ah/api/sports/v1/teams/%s/players/%s" % (gophers['id'], kyle_rau['id']),
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({
         'name': 'Kyle Rau',
         'position': 'Defense',
@@ -149,7 +149,7 @@ print "Updated Kyle Rau: " + json.dumps(kyle_rau, indent=4)
 #
 adam_wilcox = json.loads(requests.patch(
     url=host + "/_ah/api/sports/v1/teams/%s/players/%s" % (gophers['id'], adam_wilcox['id']),
-    headers={'Content Type': 'application/json', 'Accept': 'application/json'},
+    headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
     data=json.dumps({'position': 'Forward'})
 ).content)
 
