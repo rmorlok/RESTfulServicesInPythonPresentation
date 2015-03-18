@@ -10,6 +10,7 @@ allowed_methods = webapp2.WSGIApplication.allowed_methods
 new_allowed_methods = allowed_methods.union(('PATCH',))
 webapp2.WSGIApplication.allowed_methods = new_allowed_methods
 
+
 class Team(ndb.Model):
     name = ndb.StringProperty()
     colors = ndb.StringProperty(repeated=True)
@@ -89,6 +90,7 @@ def dict_to_team_update(d, team=None):
         team.colors = d['colors']
 
     return team
+
 
 def get_team_or_404(team_id):
     t = ndb.Key(urlsafe=team_id).get()
@@ -180,7 +182,12 @@ class PlayerHandler(webapp2.RequestHandler):
         _ = get_team_or_404(team_id)
         player_dicts = []
 
-        for player in Player.query(Player.team == ndb.Key(urlsafe=team_id)).iter():
+        q = Player.query(Player.team == ndb.Key(urlsafe=team_id))
+
+        if 'position' in self.request.GET:
+            q = q.filter(Player.position == self.request.GET['position'])
+
+        for player in q.iter():
             player_dicts.append(player_to_dict(player))
 
         self.response.content_type = 'application/json'

@@ -5,13 +5,10 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
-
-- url: .*
+- url: /_ah/spi/.*
   script: main.app
 
 libraries:
-- name: webapp2
-  version: "2.5.2"
+- name: endpoints
+  version: 1.0
+
