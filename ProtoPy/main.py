@@ -14,16 +14,19 @@ new_allowed_methods = allowed_methods.union(('PATCH',))
 webapp2.WSGIApplication.allowed_methods = new_allowed_methods
 
 
+
 class Team(ndb.Model):
     name = ndb.StringProperty()
     colors = ndb.StringProperty(repeated=True)
     mascot = ndb.StringProperty()
 
 
+
 class Player(ndb.Model):
     team = ndb.KeyProperty()
     name = ndb.StringProperty()
     position = ndb.StringProperty()
+
 
 
 class TeamMessage(messages.Message):
@@ -33,8 +36,10 @@ class TeamMessage(messages.Message):
     mascot = messages.StringField()
 
 
+
 class TeamsResponseMessage(messages.Message):
     teams = messages.MessageField(TeamMessage, repeated=True)
+
 
 
 class PlayerMessage(messages.Message):
@@ -44,8 +49,10 @@ class PlayerMessage(messages.Message):
     team_id = messages.StringField()
 
 
+
 class PlayersResponseMessage(messages.Message):
     players = messages.MessageField(PlayerMessage, repeated=True)
+
 
 
 def player_to_msg(player):
@@ -55,6 +62,7 @@ def player_to_msg(player):
         position=player.position,
         team_id=player.team.urlsafe() if player.team else None
     )
+
 
 
 def msg_to_player_set(msg, player=None):
@@ -68,6 +76,7 @@ def msg_to_player_set(msg, player=None):
         player.team = ndb.Key(urlsafe=team_id)
 
     return player
+
 
 
 def msg_to_player_update(msg, player=None):
@@ -86,6 +95,7 @@ def msg_to_player_update(msg, player=None):
     return player
 
 
+
 def team_to_msg(team):
     return TeamMessage(
         id=team.key.urlsafe() if team.key else None,
@@ -93,6 +103,7 @@ def team_to_msg(team):
         mascot=team.mascot,
         colors=team.colors
     )
+
 
 
 def msg_to_team_set(msg, team=None):
@@ -103,6 +114,7 @@ def msg_to_team_set(msg, team=None):
     team.colors = msg.colors
 
     return team
+
 
 
 def msg_to_team_update(msg, team=None):
@@ -120,6 +132,7 @@ def msg_to_team_update(msg, team=None):
     return team
 
 
+
 def get_team_or_404(team_id):
     t = ndb.Key(urlsafe=team_id).get()
 
@@ -130,6 +143,7 @@ def get_team_or_404(team_id):
         raise webapp2.exc.HTTPNotFound()
 
     return t
+
 
 
 def get_player_or_404(player_id):
@@ -144,7 +158,10 @@ def get_player_or_404(player_id):
     return p
 
 
+
 class TeamHandler(webapp2.RequestHandler):
+
+
     @protopy.endpoint
     def get_teams(self):
         response = TeamsResponseMessage()
@@ -155,9 +172,12 @@ class TeamHandler(webapp2.RequestHandler):
 
         return response
 
+
+
     @protopy.endpoint
     def get_team(self, team_id):
         return team_to_msg(get_team_or_404(team_id))
+
 
 
     @protopy.endpoint(team_details=TeamMessage)
@@ -167,6 +187,8 @@ class TeamHandler(webapp2.RequestHandler):
 
         return 201, team_to_msg(team), {'Location': webapp2.uri_for('get_team', team_id=team.key.urlsafe())}
 
+
+
     @protopy.endpoint(team_details=TeamMessage)
     def set_team(self, team_id, team_details):
         team = get_team_or_404(team_id)
@@ -174,6 +196,8 @@ class TeamHandler(webapp2.RequestHandler):
         team.put()
 
         return team_to_msg(team)
+
+
 
     @protopy.endpoint(team_details=TeamMessage)
     def update_team(self, team_id, team_details):
@@ -183,12 +207,18 @@ class TeamHandler(webapp2.RequestHandler):
 
         return team_to_msg(team)
 
+
+
     @protopy.endpoint
     def delete_team(self, team_id):
         ndb.Key(urlsafe=team_id).delete()
         return 204
 
+
+
 class PlayerHandler(webapp2.RequestHandler):
+
+
     @protopy.endpoint
     @protopy.query.string('position')
     def get_players(self, team_id, position):
@@ -206,10 +236,13 @@ class PlayerHandler(webapp2.RequestHandler):
 
         return response
 
+
+
     @protopy.endpoint
     def get_player(self, team_id, player_id):
         _ = get_team_or_404(team_id)
         return player_to_msg(get_player_or_404(player_id))
+
 
 
     @protopy.endpoint(player_details=PlayerMessage)
@@ -221,6 +254,8 @@ class PlayerHandler(webapp2.RequestHandler):
 
         return 201, player_to_msg(player), {'Location': webapp2.uri_for('get_player', team_id=team_id, player_id=player.key.urlsafe())}
 
+
+
     @protopy.endpoint(player_details=PlayerMessage)
     def set_player(self, team_id, player_id, player_details):
         _ = get_team_or_404(team_id)
@@ -229,6 +264,8 @@ class PlayerHandler(webapp2.RequestHandler):
         player.put()
 
         return player_to_msg(player)
+
+
 
     @protopy.endpoint(player_details=PlayerMessage)
     def update_player(self, team_id, player_id, player_details):
@@ -239,11 +276,14 @@ class PlayerHandler(webapp2.RequestHandler):
 
         return player_to_msg(player)
 
+
+
     @protopy.endpoint
     def delete_player(self, team_id, player_id):
         _ = get_team_or_404(team_id)
         ndb.Key(urlsafe=player_id).delete()
         return 204
+
 
 
 app = webapp2.WSGIApplication([

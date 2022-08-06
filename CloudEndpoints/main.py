@@ -11,10 +11,12 @@ class Team(ndb.Model):
     mascot = ndb.StringProperty()
 
 
+
 class Player(ndb.Model):
     team = ndb.KeyProperty()
     name = ndb.StringProperty()
     position = ndb.StringProperty()
+
 
 
 class TeamMessage(messages.Message):
@@ -24,17 +26,23 @@ class TeamMessage(messages.Message):
     mascot = messages.StringField(4)
 
 
+
 TEAM_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     team_id=messages.StringField(2, required=True))
+
+
 
 TEAM_UPDATE = endpoints.ResourceContainer(
     TeamMessage,
     team_id=messages.StringField(2, required=True))
 
 
+
+
 class TeamsResponseMessage(messages.Message):
     teams = messages.MessageField(TeamMessage, 1, repeated=True)
+
 
 
 class PlayerMessage(messages.Message):
@@ -44,31 +52,42 @@ class PlayerMessage(messages.Message):
     team_id = messages.StringField(4)
 
 
+
 class PlayersResponseMessage(messages.Message):
     players = messages.MessageField(PlayerMessage, 1, repeated=True)
 
 
+
 class PlayersRequestMessage(messages.MessageField):
     position = messages.StringField(1)
+
+
 
 PLAYERS_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     url_team_id=messages.StringField(2, required=True),
     position=messages.StringField(3))
 
+
+
 PLAYER_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     url_team_id=messages.StringField(2, required=True),
     url_player_id=messages.StringField(3, required=True))
 
+
+
 PLAYER_CREATE = endpoints.ResourceContainer(
     PlayerMessage,
     url_team_id=messages.StringField(2, required=True))
+
+
 
 PLAYER_UPDATE = endpoints.ResourceContainer(
     PlayerMessage,
     url_team_id=messages.StringField(2, required=True),
     url_player_id=messages.StringField(3, required=True))
+
 
 
 def player_to_msg(player):
@@ -78,6 +97,7 @@ def player_to_msg(player):
         position=player.position,
         team_id=player.team.urlsafe() if player.team else None
     )
+
 
 
 def msg_to_player_set(msg, player=None):
@@ -91,6 +111,7 @@ def msg_to_player_set(msg, player=None):
         player.team = ndb.Key(urlsafe=team_id)
 
     return player
+
 
 
 def msg_to_player_update(msg, player=None):
@@ -109,6 +130,7 @@ def msg_to_player_update(msg, player=None):
     return player
 
 
+
 def team_to_msg(team):
     return TeamMessage(
         id=team.key.urlsafe() if team.key else None,
@@ -116,6 +138,7 @@ def team_to_msg(team):
         mascot=team.mascot,
         colors=team.colors
     )
+
 
 
 def msg_to_team_set(msg, team=None):
@@ -126,6 +149,7 @@ def msg_to_team_set(msg, team=None):
     team.colors = msg.colors
 
     return team
+
 
 
 def msg_to_team_update(msg, team=None):
@@ -143,6 +167,7 @@ def msg_to_team_update(msg, team=None):
     return team
 
 
+
 def get_team_or_404(team_id):
     t = ndb.Key(urlsafe=team_id).get()
 
@@ -153,6 +178,7 @@ def get_team_or_404(team_id):
         raise endpoints.NotFoundException()
 
     return t
+
 
 
 def get_player_or_404(player_id):
@@ -167,10 +193,13 @@ def get_player_or_404(player_id):
     return p
 
 
+
 @endpoints.api(name='sports',
                version='v1',
                description='Sports API')
 class SportsAPI(remote.Service):
+
+
     @endpoints.method(message_types.VoidMessage,
                       TeamsResponseMessage,
                       name='teamsList',
@@ -185,6 +214,8 @@ class SportsAPI(remote.Service):
 
         return response
 
+
+
     @endpoints.method(TEAM_REQUEST,
                       TeamMessage,
                       name='teamsGet',
@@ -192,6 +223,8 @@ class SportsAPI(remote.Service):
                       http_method='GET')
     def get_team(self, request):
         return team_to_msg(get_team_or_404(request.team_id))
+
+
 
 
     @endpoints.method(TeamMessage,
@@ -205,6 +238,8 @@ class SportsAPI(remote.Service):
 
         return team_to_msg(team)
 
+
+
     @endpoints.method(TEAM_UPDATE,
                       TeamMessage,
                       name='teamsSet',
@@ -216,6 +251,8 @@ class SportsAPI(remote.Service):
         team.put()
 
         return team_to_msg(team)
+
+
 
     @endpoints.method(TEAM_UPDATE,
                       TeamMessage,
@@ -229,6 +266,8 @@ class SportsAPI(remote.Service):
 
         return team_to_msg(team)
 
+
+
     @endpoints.method(TEAM_REQUEST,
                       message_types.VoidMessage,
                       name='teamsDelete',
@@ -237,6 +276,8 @@ class SportsAPI(remote.Service):
     def delete_team(self, request):
         ndb.Key(urlsafe=request.team_id).delete()
         return message_types.VoidMessage()
+
+
 
     @endpoints.method(PLAYERS_REQUEST,
                       PlayersResponseMessage,
@@ -258,6 +299,8 @@ class SportsAPI(remote.Service):
 
         return response
 
+
+
     @endpoints.method(PLAYER_REQUEST,
                       PlayerMessage,
                       name='playersGet',
@@ -266,6 +309,7 @@ class SportsAPI(remote.Service):
     def get_player(self, request):
         _ = get_team_or_404(request.url_team_id)
         return player_to_msg(get_player_or_404(request.url_player_id))
+
 
 
     @endpoints.method(PLAYER_CREATE,
@@ -281,6 +325,8 @@ class SportsAPI(remote.Service):
 
         return player_to_msg(player)
 
+
+
     @endpoints.method(PLAYER_UPDATE,
                       PlayerMessage,
                       name='playersSet',
@@ -294,6 +340,8 @@ class SportsAPI(remote.Service):
 
         return player_to_msg(player)
 
+
+
     @endpoints.method(PLAYER_UPDATE,
                       PlayerMessage,
                       name='playersUpdate',
@@ -306,6 +354,8 @@ class SportsAPI(remote.Service):
         player.put()
 
         return player_to_msg(player)
+
+
 
     @endpoints.method(PLAYER_REQUEST,
                       message_types.VoidMessage,

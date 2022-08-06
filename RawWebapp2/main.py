@@ -17,10 +17,12 @@ class Team(ndb.Model):
     mascot = ndb.StringProperty()
 
 
+
 class Player(ndb.Model):
     team = ndb.KeyProperty()
     name = ndb.StringProperty()
     position = ndb.StringProperty()
+
 
 
 def player_to_dict(player):
@@ -30,6 +32,7 @@ def player_to_dict(player):
         'position': player.position,
         'team_id': player.team.urlsafe() if player.team else None
     }
+
 
 
 def dict_to_player_set(d, player=None):
@@ -43,6 +46,7 @@ def dict_to_player_set(d, player=None):
         player.team = ndb.Key(urlsafe=team_id)
 
     return player
+
 
 
 def dict_to_player_update(d, player=None):
@@ -61,10 +65,12 @@ def dict_to_player_update(d, player=None):
     return player
 
 
+
 def team_to_dict(team):
     d = team.to_dict()
     d['id'] = team.key.urlsafe() if team.key else None
     return d
+
 
 
 def dict_to_team_set(d, team=None):
@@ -75,6 +81,7 @@ def dict_to_team_set(d, team=None):
     team.colors = d.get('colors', [])
 
     return team
+
 
 
 def dict_to_team_update(d, team=None):
@@ -92,6 +99,7 @@ def dict_to_team_update(d, team=None):
     return team
 
 
+
 def get_team_or_404(team_id):
     t = ndb.Key(urlsafe=team_id).get()
 
@@ -102,6 +110,7 @@ def get_team_or_404(team_id):
         raise webapp2.exc.HTTPNotFound()
 
     return t
+
 
 
 def get_player_or_404(player_id):
@@ -116,6 +125,7 @@ def get_player_or_404(player_id):
     return p
 
 
+
 class TeamHandler(webapp2.RequestHandler):
     def get_teams(self):
         team_dicts = []
@@ -125,6 +135,8 @@ class TeamHandler(webapp2.RequestHandler):
 
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(team_dicts))
+
+
 
     def create_team(self):
         team = None
@@ -140,9 +152,13 @@ class TeamHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(team_to_dict(team)))
 
+
+
     def get_team(self, team_id):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(team_to_dict(get_team_or_404(team_id))))
+
+
 
     def set_team(self, team_id):
         team = get_team_or_404(team_id)
@@ -157,6 +173,8 @@ class TeamHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(team_to_dict(team)))
 
+
+
     def update_team(self, team_id):
         team = get_team_or_404(team_id)
 
@@ -169,6 +187,8 @@ class TeamHandler(webapp2.RequestHandler):
 
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(team_to_dict(team)))
+
+
 
     def delete_team(self, team_id):
         team_key = ndb.Key(urlsafe=team_id)
@@ -193,6 +213,8 @@ class PlayerHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(player_dicts))
 
+
+
     def create_player(self, team_id):
         team = get_team_or_404(team_id)
         player = None
@@ -209,6 +231,8 @@ class PlayerHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(player_to_dict(player)))
 
+
+
     def get_player(self, team_id, player_id):
         team = get_team_or_404(team_id)
         player = get_player_or_404(player_id)
@@ -218,6 +242,8 @@ class PlayerHandler(webapp2.RequestHandler):
 
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(player_to_dict(player)))
+
+
 
     def set_player(self, team_id, player_id):
         team = get_team_or_404(team_id)
@@ -236,6 +262,8 @@ class PlayerHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(player_to_dict(player)))
 
+
+
     def update_player(self, team_id, player_id):
         team = get_team_or_404(team_id)
         player = get_player_or_404(player_id)
@@ -253,10 +281,15 @@ class PlayerHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(player_to_dict(player)))
 
+
+
     def delete_player(self, team_id, player_id):
         _ = get_team_or_404(team_id)
         ndb.Key(urlsafe=player_id).delete()
         self.response.status_int = 204
+
+
+
 
 app = webapp2.WSGIApplication([
     webapp2.Route(r'/v1/teams',                               methods=['GET'],    handler='main.TeamHandler:get_teams',       name='get_teams'),
